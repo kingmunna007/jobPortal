@@ -3,6 +3,7 @@ package com.kingmunna.Jobs.controller;
 import com.kingmunna.Jobs.model.JobPost;
 import com.kingmunna.Jobs.service.JobsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,10 +43,9 @@ public class JobsController {
         return jobsService.getById(job.getPostId());
     }
     @DeleteMapping("/jobpost/{id}")
-    public String removeJob(@PathVariable("id") int id){
+    public ResponseEntity<JobPost> removeJob(@PathVariable("id") int id){
 
-         jobsService.removeJob(id);
-         return "deleted sucessfully";
+        return ResponseEntity.ok(jobsService.removeJob(id));
     }
     @PutMapping("/jobpost")
     public JobPost update(@RequestBody JobPost jobPost){

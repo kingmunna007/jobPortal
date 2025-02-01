@@ -2,14 +2,16 @@ package com.kingmunna.Jobs.service;
 
 import com.kingmunna.Jobs.model.JobPost;
 import com.kingmunna.Jobs.repo.JobsRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 public class JobsService {
     @Autowired
@@ -47,13 +49,25 @@ public class JobsService {
     public void addJob(JobPost job) {
          repo.save(job);
     }
+    @Transactional
+    public JobPost removeJob(int id) {
+        JobPost job =  repo.findById(id).orElseThrow(() -> new RuntimeException("Id not found!"));
 
-    public void removeJob(int id) {
-         repo.deleteById(id);
+        repo.deleteById(id);
+        log.info("deleted job: {}",job);
+
+        return job;
     }
 
     public JobPost update(JobPost jobPost) {
-        JobPost job =  repo.findById(jobPost.getPostId()).orElse(null);
+        JobPost job =  repo.findById(jobPost.getPostId()).orElseThrow(() -> new RuntimeException("Id not found!"));
+
+        job.setPostProfile(jobPost.getPostProfile());
+        job.setPostDesc(jobPost.getPostDesc());
+        job.setReqExperience(jobPost.getReqExperience());
+        job.setPostTechStack(jobPost.getPostTechStack());
+
+        return repo.save(job);
 
     }
 }
